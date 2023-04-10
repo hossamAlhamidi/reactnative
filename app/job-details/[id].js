@@ -19,6 +19,7 @@ import {
 import { COLORS, icons, images, SIZES } from '../../constants';
 import useFetch from '../../hooks/useFetch';
 
+import { Share } from 'react-native';
 const tabs = ['About', 'Qualifications', 'Responsibilities'];
 const JobDetails = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -29,7 +30,7 @@ const JobDetails = () => {
     job_id: params.id,
   });
 
- const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     refetch();
     setRefreshing(false);
@@ -38,21 +39,51 @@ const JobDetails = () => {
   const displayTabContent = () => {
     switch (activeTab) {
       case 'About':
-        return <JobAbout info={data[0]?.job_description ?? "No Data Provided"} />;
+        return (
+          <JobAbout info={data[0]?.job_description ?? 'No Data Provided'} />
+        );
       case 'Qualifications':
         return (
           <Specifics
             title={'Qualifications'}
-            points={data[0].job_highlights?.Qualifications ?? ['No Data Provided']}
+            points={
+              data[0].job_highlights?.Qualifications ?? ['No Data Provided']
+            }
           />
         );
       case 'Responsibilities':
-        return  <Specifics
-        title={'Responsibilities'}
-        points={data[0].job_highlights?.Responsibilities ?? ['No Data Provided']}
-      />;
+        return (
+          <Specifics
+            title={'Responsibilities'}
+            points={
+              data[0].job_highlights?.Responsibilities ?? ['No Data Provided']
+            }
+          />
+        );
       default:
         break;
+    }
+  };
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: 'Check out this Job.',
+        url: 'https://example.com',
+        title: 'Job',
+      });
+
+      if (result?.action === Share.sharedAction) {
+        if (result?.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result?.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
     }
   };
   return (
@@ -66,11 +97,15 @@ const JobDetails = () => {
             <ScreenHeaderBtn
               iconUrl={icons.left}
               dimension='60%'
-              handlePress={() => router.goBack()}
+              handlePress={() => router.back()}
             />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.share} dimension='60%' />
+            <ScreenHeaderBtn
+              iconUrl={icons.share}
+              dimension='60%'
+              handlePress={onShare}
+            />
           ),
           headerTitle: '',
         }}
@@ -107,7 +142,12 @@ const JobDetails = () => {
             </View>
           )}
         </ScrollView>
-        <JobFooter url={data[0]?.job_google_link ?? 'https://careers.google.com/jobs/results'}/>
+        <JobFooter
+          url={
+            data[0]?.job_google_link ??
+            'https://careers.google.com/jobs/results'
+          }
+        />
       </>
     </SafeAreaView>
   );

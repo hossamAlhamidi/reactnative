@@ -29,7 +29,8 @@ const Home = () => {
             <ScreenHeaderBtn iconUrl={icons.menu} dimension='60%' />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn iconUrl={images.profile} dimension='100%' />
+            // <ScreenHeaderBtn iconUrl={'https://ui-avatars.com/api/?background=2c5c9b&name=H&size=32&font-size=.35&rounded=true'} dimension='100%' />
+            <ScreenHeaderBtn iconUrl={icons.avatar} dimension='100%' />
           ),
           headerTitle: '',
         }}
